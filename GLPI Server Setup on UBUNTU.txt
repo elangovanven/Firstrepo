@@ -1,0 +1,192 @@
+﻿GLPI Server Setup on UBUNTU
+
+
+Login to Ubuntu Machine - May be SSH or terminal
+
+
+Update the Machine
+
+
+Sudo apt update
+
+
+Upgrade the Machine
+
+
+Sudo apt upgrade
+
+
+Check the Existing Running Services
+
+
+service --status-all
+
+
+Install Apache Services
+
+
+sudo apt install apache2
+
+
+Service Status Check - systemctl status apache2
+Enable Service for all time - systemctl enable apache2
+
+
+Configure system Firewall
+Check Status of Firewall - ufw status
+Allow required ports in firewall
+ufw allow ssh
+ufw allow http
+ufw allow https
+Enable Firewall - ufw enable
+Check Status of the Firewall - ufw status numbered
+
+
+Install PHP
+
+
+sudo apt install php php-mysql php-cli php-gd libapache2-mod-php -y
+
+
+Check PHP Version - php -v
+
+
+make index.php is priority for apache
+
+
+sudo nano /etc/apache2/mods-enabled/dir.conf
+sudo nano /var/www/html/test.php
+
+
+Add the following code in the test.php file
+<?php
+    phpinfo ();
+?>
+
+
+Restart the apache service - systemctl restart apache2
+
+
+test php working or not by browsing ip/test.php(1.1.1.1/test.php)
+
+
+Install MYSQL Server
+
+
+Install Database - MariaDB
+
+
+sudo apt install mariadb-server mariadb-client -y
+systemctl status mariadb
+systemctl enable mariadb
+
+
+Creating root password for DB
+
+
+sudo mysql_secure_installation
+Enter current pass : just click Enter
+Set root Password - Yes
+New Pass - *****
+Re-Enter Pass - *****
+Remove Anonymous Users - Enter
+Disallow Root Login Remotely - Enter
+Remove Test Database - Enter
+Reload Privilege - Enter
+Login DB:
+sudo mysql -u root -p
+Enter Pass - *****
+
+
+Creating Database :
+create database glpidb;
+create user glpiuser@localhost identified by '****';
+SHOW DATABASES;
+
+
+grant full privileges on glpidb for new user
+grant all on glpidb.* to glpiuser@localhost;
+
+
+Reload Database 
+flush privileges;
+exit
+
+
+Install PHP Dependent Modules for GLPI
+
+
+Need to install PHP Modules required for GLPI
+
+
+sudo apt-get install php-curl php-gd php-imagick php-intl php-apcu php-memcache php-imap php-mysql php-cas php-ldap php-tidy php-pear php-xmlrpc php-pspell php-mbstring php-json php-gd -y
+
+
+sudo apt-get install phpmyadmin php-mbstring 
+
+
+Allow override in Apache
+
+
+nano /etc/apache2/apache2.conf
+
+
+<Directory /var/www/>
+        Options Indexes FollowSymLinks
+        AllowOverride All
+        Require all granted
+</Directory>
+
+
+systemctl restart apache2
+
+
+change ownership on html directory
+
+
+Cd /var/www/
+sudo chown -R www-data:www-data html
+
+
+
+
+Download GLPI
+
+
+Cd /var/www/html
+
+
+wget https://github.com/glpi-project/glpi/releases/download/9.5.5/glpi-9.5.5.tgz
+
+
+Extract Tar file
+
+
+tar xvf packagename
+
+
+cp -r glpi/. /var/www/html
+rm -r glpi
+
+
+
+
+
+
+Install Fusion Inventory Plugins
+
+
+Cd /var/www/html/plugins/
+
+
+Download Fusion Inventory Plugin Package
+
+
+Wget link
+
+
+Link https://github.com/fusioninventory/fusioninventory-for-glpi/releases/download/glpi9.5%2B3.0/fusioninventory-9.5+3.0.tar.bz2
+
+
+Extract Fusion Inventory Package
+Tar xvf packagename
